@@ -1,0 +1,96 @@
+<div class="card mt-5">
+    <div class="card-body">
+        <div class="card-title">
+            <button class="btn btn-primary btn-sm" style="float: right;" (click)="openModal()">Agregar nuevo
+                Corral</button>
+            <h5>Corrales</h5>
+            <p>Corrales resgistrados en la base de datos</p>
+        </div>
+
+        <table class="table table-bordered table-striped mt-4" *ngIf="!loading && barnyards.length > 0; else notData">
+            <thead class="bg-light">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Capacidad</th>
+                    <!-- <th scope="col">Detalle</th> -->
+                    <th scope="col" style="width: 50px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let barnyard of barnyards"
+                    [ngClass]="{'bg-danger text-white': (barnyard.status === 'Inactivo' )}">
+                    <td scope="row"> {{ barnyard.name }} </td>
+                    <td> {{ barnyard.description }} </td>
+                    <td> {{ barnyard.limit }} </td>
+                    <!-- <td class="text-center">
+                        <a class="btn btn-outline-info btn-xs" (click)="seeAnimals(barnyard)">
+                            Animales</a>
+                    </td> -->
+                    <td>
+                        <div class="text-center">
+
+                            <a class="btn  btn-xs" (click)="getBarnyard(barnyard)">
+                                Editar</a>
+
+                            <a class="btn  btn-xs" (click)="anularOActivar(barnyard, 'Activo')">
+                                Eliminar</a>
+
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<app-modal-basic #modal [dialogClass]="modal-lg">
+    <div class="app-modal-header">
+        <button type="button" class="close basic-close" (click)="modal.hide()">
+            <span aria-hidden="true">
+                <i class="fas fa-times" (click)="modal.hide()"></i>
+            </span>
+        </button>
+    </div>
+    <div class="app-modal-body">
+        <form [formGroup]="form">
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label class="custom-label" for="funcionario_id">Nombre de Corral</label>
+                    <input type="text" class="form-control form-control-sm" [class.is-invalid]="name_barnyard_valid"
+                        formControlName="name" required>
+                    <div class="col-md-7 offset-4">
+                        <small class="invalid text-danger" *ngIf="name_barnyard_valid"> Es necesario el nombre de la
+                            Corral
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12">
+                    <label class="custom-label" for="limit">Limite para capacidad Corral</label>
+                    <input type="number" class="form-control form-control-sm" [class.is-invalid]="limit_barnyard_valid"
+                        formControlName="limit" required>
+                    <div class="col-md-7 offset-4">
+                        <small class="invalid text-danger" *ngIf="limit_barnyard_valid"> Es necesario el
+                            Limite para capacidad
+                            Corral
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12">
+                    <label class="custom-label" for="description">Descricion</label>
+                    <input type="text" class="form-control form-control-sm"
+                        [class.is-invalid]="description_barnyard_valid" formControlName="description">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="app-modal-footer">
+        <div class="form-group text-right">
+            <button (click)="modal.hide()" type="button" class="btn btn-danger raised mr-2 btn-sm">Cerrar</button>
+            <button type="submit" class="btn btn-primary btn-sm raised" (click)="createNewBarnyard()"
+                [disabled]="!form.valid">Guardar Corral</button>
+        </div>
+    </div>
+</app-modal-basic>

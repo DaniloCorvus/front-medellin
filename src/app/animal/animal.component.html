@@ -1,0 +1,134 @@
+<div class="card mt-5">
+
+  <app-grafico-barras></app-grafico-barras>
+
+  <div class="card-body">
+    <div class="card-title">
+      <button class="btn btn-primary btn-sm" style="float: right;" (click)="openModal()">Agregar nuevo
+        Animal </button>
+      <h5>Animales</h5>
+
+      <a href="{{environment.base_url}}/generate" class="btn btn-outline-info m-1 btn-sm" target="_blank"><i class="fa fa-file-text"></i> Reporte PDF</a>
+
+
+      <select name="danger" class="form-control form-control-sm" (change)="getAnimalsByBarnyard(); ageAverage()"
+        placeholder="Seleccione corral" [(ngModel)]="barnnyardSelected">
+        <option value="0">Seleccione corral</option>
+        <option value="{{item.id}}" *ngFor="let item of barnyards">{{item.name}}</option>
+      </select>
+
+      <p>Animales resgistrados en la base de datos</p>
+    </div>
+
+    <div class="row" *ngIf="showAverage">
+      <div class="col-12 text-center">
+        <div class="card text-center p-3">Promedio de edad en el corral: <span>{{average}} años</span></div>
+      </div>
+    </div>
+
+    <table class="table table-bordered table-striped mt-4" *ngIf="!loading && animals.length > 0; else notData">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Peligroso?</th>
+          <th scope="col">Corral</th>
+          <th scope="col">Edad</th>
+          <th scope="col" style="width: 50px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let animal of animals" [ngClass]="{'bg-danger text-white': (animal.status === 'Inactivo' )}">
+          <td scope="row"> {{ animal.name }} </td>
+          <td> {{ animal.danger ? 'Si' : 'No' }} </td>
+          <td> {{ animal.barnyard.name }} </td>
+          <td> {{ animal.age }} </td>
+          <td>
+            <div class="text-center">
+
+              <a class="btn  btn-xs" (click)="getAnimal(animal)">
+                Editar</a>
+
+              <a class="btn  btn-xs" (click)="anularOActivar(animal, 'Activo')">
+                Eliminar</a>
+
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+<app-modal-basic #modal [dialogClass]="modal-lg">
+  <div class="app-modal-header">
+    <button type="button" class="close basic-close" (click)="modal.hide()">
+      <span aria-hidden="true">
+        <i class="fas fa-times" (click)="modal.hide()"></i>
+      </span>
+    </button>
+  </div>
+  <div class="app-modal-body mt-5">
+    <form [formGroup]="form">
+      <div class="form-row">
+
+
+        <div class="form-group col-md-12">
+          <label class="custom-label" for="funcionario_id">Nombre de Animal</label>
+          <input type="text" class="form-control form-control-sm" [class.is-invalid]="name_animal_valid"
+            formControlName="name" required>
+          <div class="col-md-7 offset-4">
+            <small class="invalid text-danger" *ngIf="name_animal_valid">Es necesario este campo</small>
+          </div>
+        </div>
+
+
+
+        <!-- <div class="form-group col-md-12">
+          <label class="custom-label" for="type">Tipo</label>
+          <input type="number" class="form-control form-control-sm" [class.is-invalid]="type_animal_valid"
+            formControlName="type" required>
+          <div class="col-md-7 offset-4">
+            <small class="invalid text-danger" *ngIf="type_animal_valid">Es necesario este campo</small>
+          </div>
+        </div> -->
+
+        <div class="form-group col-md-12">
+          <label class="custom-label" for="danger">Peligroso?</label>
+          <select name="danger" class="form-control form-control-sm" formControlName="danger"
+            [class.is-invalid]="danger_animal_valid">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+          </select>
+          <div class="col-md-7 offset-4">
+            <small class="invalid text-danger" *ngIf="danger_animal_valid"> Es necesario este campo</small>
+          </div>
+        </div>
+
+        <div class="form-group col-md-12">
+          <label class="custom-label" for="age">Edad</label>
+          <input type="text" class="form-control form-control-sm" [class.is-invalid]="age_animal_valid"
+            formControlName="age">
+        </div>
+
+
+        <div class="form-group col-md-12">
+          <label class="custom-label" for="barnyard">Corral</label>
+          <select name="danger" class="form-control form-control-sm" formControlName="barnyard_id"
+            [class.is-invalid]="barnyard_id_valid">
+            <option value="{{item.id}}" *ngFor="let item of barnyards">{{item.name}}</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="app-modal-footer">
+    <div class="form-group text-right">
+      <button (click)="modal.hide()" type="button" class="btn btn-danger raised mr-2 btn-sm">Cerrar</button>
+      <button type="submit" class="btn btn-primary btn-sm raised" (click)="createNewAnimal()"
+        [disabled]="!form.valid">Guardar Animal</button>
+    </div>
+  </div>
+</app-modal-basic>
+<ng-template #notData>
+  <!-- <app-not-data [loading]="loading"></app-not-data> -->
+</ng-template>
